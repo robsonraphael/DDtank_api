@@ -1,5 +1,5 @@
 module Attributes
-  # Module Attribute Basic
+  # Class Attribute basic
   class Basic
     attr_accessor :attribute
 
@@ -33,9 +33,17 @@ module Attributes
       value.to_i
     end
     private :get_attr
+
+    def up(hash)
+      # @attribute[:attack] = calculate_attributes(:attack, hash[:level])
+      # @attribute[:defense] = calculate_attributes(:defense, hash[:level])
+      # @attribute[:agility] = calculate_attributes(:agility, hash[:level])
+      # @attribute[:luck] = calculate_attributes(:luck, hash[:level])
+    end
+    private :up
   end
 
-  # Module Attribute Force
+  # Class Attribute Force
   class Force < Basic
     def initialize(**hash)
       super
