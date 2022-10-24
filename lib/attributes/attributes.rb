@@ -4,49 +4,61 @@ module Attributes
     attr_accessor :attribute
 
     def initialize(**hash)
+      hash[:level] = 1 if hash[:level] > 45
+
       @attribute = {
-        attack: update(:attack, hash[:level]),
-        defense: update(:defense, hash[:level]),
-        agility: update(:agility, hash[:level]),
-        luck: update(:luck, hash[:level])
+        attack: calculate_attributes(:attack, hash[:level]),
+        defense: calculate_attributes(:defense, hash[:level]),
+        agility: calculate_attributes(:agility, hash[:level]),
+        luck: calculate_attributes(:luck, hash[:level])
       }
     end
 
-    def update(attr, level)
+    def calculate_attributes(attr, level)
       case attr
       when :attack
-        1 + level
+        get_attr(1.2, Math.log(level)) + 1
       when :defense
-        2 + level
+        get_attr(2, Math.log(level)) + level
       when :agility
-        2 + level
+        get_attr(2.3, Math.log(level)) * 2
       when :luck
-        3 + level
+        get_attr(2, Math.log(level)) + 2
       end
     end
+    private :calculate_attributes
+
+    def get_attr(arg1, arg2)
+      value = Math.exp(arg1) * Math.exp(arg2)
+      value.to_i
+    end
+    private :get_attr
   end
 
   # Module Attribute Force
   class Force < Basic
     def initialize(**hash)
       super
-      @attribute[:damage] = update_attribute_by_level(:damage, hash[:level])
-      @attribute[:armo] = update_attribute_by_level(:armo, hash[:level])
-      @attribute[:hp] = update_attribute_by_level(:hp, hash[:level])
-      @attribute[:strong] = update_attribute_by_level(:strong, hash[:level])
+      hash[:level] = 1 if hash[:level] > 45
+
+      @attribute[:damage] = calculate_forces(:damage, hash[:level])
+      @attribute[:armo] = calculate_forces(:armo, hash[:level])
+      @attribute[:hp] = calculate_forces(:hp, hash[:level])
+      @attribute[:strong] = calculate_forces(:strong, hash[:level])
     end
 
-    def update_attribute_by_level(attr, level)
+    def calculate_forces(attr, level)
       case attr
       when :damage
-        @attribute[:attack] + Math.log(level).to_i
+        @attribute[:attack]
       when :armo
-        @attribute[:defense] + Math.log(level).to_i
+        @attribute[:defense]
       when :hp
-        level + (@attribute[:hp] || 900)
+        @attribute[:hp] || 900 + Math.exp(level).to_i
       when :strong
-        level + (@attribute[:strong] || 200)
+        @attribute[:strong] || 200 + Math.exp(level).to_i
       end
     end
+    private :calculate_forces
   end
 end
